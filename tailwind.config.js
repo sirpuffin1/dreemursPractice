@@ -8,7 +8,8 @@ module.exports = {
     extend: {
       colors: {
         'sleepy-purple': '#9f22f2',
-        'nightly-purple': '#2f0047'
+        'nightly-purple': '#2f0047',
+        'main-purple': '#070b34'
       }
     },
   },
