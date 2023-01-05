@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const Hero = () => {
   return (
@@ -9,9 +10,13 @@ const Hero = () => {
         width={500}
         height={500}
       />
-        <div className="flex items-center flex-col justify-around">
+      <div className="flex items-center flex-col justify-around">
         <h1 className="text-white text-6xl">Let all your dreams come true</h1>
-        <button className="btn btn-wide bg-sleepy-purple text-nightly-purple hover:bg-nightly-purple">Register</button>
+        <Link href="/register">
+          <button className="btn btn-wide bg-sleepy-purple text-nightly-purple hover:bg-nightly-purple">
+            Register
+          </button>
+        </Link>
       </div>
     </div>
   );
