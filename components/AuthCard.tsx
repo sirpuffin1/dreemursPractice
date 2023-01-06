@@ -5,8 +5,8 @@ const AuthCard = ({providers}: any) => {
     return (
         <div className="card w-96 glass">
         <div className="card-body">
-          <h2 className="card-title justify-center">Register</h2>
           <ProviderButtons providers={providers}/>
+          <div className="divider before:bg-white after:bg-white"></div> 
           <AuthForm/>
         </div>
       </div>
