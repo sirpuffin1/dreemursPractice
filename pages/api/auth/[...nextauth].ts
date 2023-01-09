@@ -7,12 +7,24 @@ import dbConnect from "../../../lib/dbConnect"
 import User from '../../../model/User';
 import { compare } from 'bcrypt';
 
+interface IUser {
+  id: string
+}
+
 export default NextAuth ({
   // Configure one or more authentication providers
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID,
       clientSecret: process.env.GITHUB_SECRET,
+      profile(profile) {
+        return {
+          id: profile.id,
+          email: profile.email,
+          posts: [],
+          username: ''
+        }
+      }
     }),
     // ...add more providers here
     CredentialsProvider({
@@ -40,8 +52,6 @@ export default NextAuth ({
         const user = await User.findOne({
           email: credentials?.email
         })
-
-        console.log(user, 'line 44')
 
         if(!user) {
           throw new Error("Email is not registered")
@@ -72,5 +82,16 @@ export default NextAuth ({
     signIn: '/auth',
     signOut: '/'
   },
+  callbacks: {
+    jwt: async ({token, user}) => {
+      user && (token.user = user.id)
+      return token
+    },
+    session: async ({session, token}) => {
+      session.user = token.user as IUser
+      console.log(session, 'session')
+      return session
+    }
+  }
   
 })
