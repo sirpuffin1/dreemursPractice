@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -11,7 +10,8 @@ const userSchema = new Schema({
     },
     hashedPassword: {
         type: String, required: true, minlength: 5
-    }
+    },
+    posts: [{ type: Schema.Types.ObjectId, ref:"Post"}],
 })
 
 const User = mongoose.models.User || mongoose.model("User", userSchema)
