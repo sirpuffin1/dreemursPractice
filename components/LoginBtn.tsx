@@ -2,10 +2,11 @@ import { useSession, signIn, signOut } from "next-auth/react"
 
 const LoginBtn = () => {
     const { data: session } = useSession()
+    console.log(session)
     if(session) {
         return (
             <>
-{session?.user?.email} <br />
+{session?.user} <br />
             <button onClick={() => signOut()}>Sign Out</button>
             </>
         )

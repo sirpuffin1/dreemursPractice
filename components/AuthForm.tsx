@@ -10,7 +10,6 @@ const defaultEmailPassword = {
 };
 
 const AuthForm = () => {
-  const { data: session } = useSession();
   const [authType, setAuthType] = useState("Login");
   const oppAuthType: { [key: string]: string } = {
     Login: "Register",
@@ -44,7 +43,7 @@ const AuthForm = () => {
   };
 
   const loginUser = async () => {
-    const res:any = signIn("credentials", {
+    const res:any = await signIn("credentials", {
       ...emailPassword,
       redirect: false,
       callbackUrl: `${window.location.origin}`,

@@ -1,7 +1,11 @@
+import { useSession } from "next-auth/react";
+
 const home = () => {
+    const { data: session } = useSession()
+
     return (
         <div>
-            Enter
+            {session?.user.id}
         </div>
     );
 }

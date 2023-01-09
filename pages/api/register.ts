@@ -61,23 +61,16 @@ export default async function handler(
 
   // hash password
   const hashedPassword = await bcrypt.hash(password, 12);
-  console.log(hashedPassword)
 
-  // create new User on MongoDB
-  const newUser = new User({
-    username,
-    email,
-    hashedPassword,
-  });
+  const data = { username, email, hashedPassword}
 
-  console.log(newUser)
-
-  newUser
-    .save()
-    .then(() =>
-      res.status(200).json({ msg: "Successfuly created new User: " + newUser })
+  User.create(data)
+    .then((user) => {
+      res.status(200).json({ msg: "Successfuly created new User: "})
+    }
     )
-    .catch((err: string) =>
+    .catch((err: string) => {
       res.status(400).json({ error: "Error on '/api/register': " + err })
+    }
     );
 }
