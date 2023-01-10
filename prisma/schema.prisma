@@ -3,6 +3,10 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+generator client {
+  provider        = "prisma-client-js"
+}
+
 model Account {
     id                String  @id @default(auto()) @map("_id") @db.ObjectId
     userId            String  @db.ObjectId
@@ -31,14 +35,14 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(auto()) @map("_id") @db.ObjectId
-    registeredAt    DateTime @default(now())
-    firstName       String?     
-    lastName        String?
-    email           String  @unique
-    password        String
-    accounts      Account[]
-    sessions      Session[]
+  id  String  @id @default(auto()) @map("_id") @db.ObjectId
+  username          String? @default("usey")
+  email         String   @unique
+  emailVerified DateTime?
+  hashedPassword    String?
+  accounts      Account[]
+  sessions      Session[]
+  posts         Posts[]
 }
 
 model VerificationToken {
@@ -48,4 +52,12 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Posts {
+    id            String @id @default(auto()) @map("_id") @db.ObjectId
+    transcription String
+    likes         Int
+    author        User?   @relation(fields: [authorId], references: [id])
+    authorId      String @db.ObjectId // relation scalar field (used in the `@relation` attribute above)
 }
