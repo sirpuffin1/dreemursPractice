@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import dbConnect from "../../lib/dbConnect";
-import User from "../../model/User";
 import bcrypt from "bcrypt";
+import client from "../../lib/prismadb";
 
 interface ResponseData {
   error?: string;
@@ -25,8 +24,10 @@ const validateForm = async (
     return { error: "Email is invalid" };
   }
 
-  await dbConnect();
-  const emailUser = await User.findOne({ email: email });
+  const emailUser = await client.user.findFirst({
+    where: {
+      email: email
+    }})
 
   if (emailUser) {
     return { error: "Email already exists" };
@@ -55,7 +56,7 @@ export default async function handler(
   console.log(username)
   const errorMessage = await validateForm(username, email, password);
   if (errorMessage) {
-    console.log('the validation failed')
+    console.log('the validation failed', errorMessage)
     return res.status(400).json(errorMessage as ResponseData);
   }
 
@@ -64,8 +65,10 @@ export default async function handler(
 
   const data = { username, email, hashedPassword}
 
-  User.create(data)
-    .then((user) => {
+  client.user.create({
+    data: data
+  })
+    .then(() => {
       res.status(200).json({ msg: "Successfuly created new User: "})
     }
     )

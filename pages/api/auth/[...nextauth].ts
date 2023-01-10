@@ -1,11 +1,9 @@
 import  CredentialsProvider from 'next-auth/providers/credentials';
 import NextAuth from "next-auth"
 import GithubProvider from "next-auth/providers/github"
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter"
-import clientPromise from "../../../lib/mongodb"
-import dbConnect from "../../../lib/dbConnect"
-import User from '../../../model/User';
 import { compare } from 'bcrypt';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import client from '../../../lib/prismadb';
 
 interface IUser {
   id: string
@@ -21,8 +19,7 @@ export default NextAuth ({
         return {
           id: profile.id,
           email: profile.email,
-          posts: [],
-          username: ''
+          hashedPassword: '',
         }
       }
     }),
@@ -47,10 +44,11 @@ export default NextAuth ({
         // incorrect password
         // return user
 
-        await dbConnect();
-
-        const user = await User.findOne({
-          email: credentials?.email
+        const user = await client.user.findFirst({
+            where: {
+              email: credentials?.email
+            }
+          
         })
 
         if(!user) {
@@ -72,7 +70,7 @@ export default NextAuth ({
     })
     
   ],
-  adapter: MongoDBAdapter(clientPromise),
+  adapter: PrismaAdapter(client),
   session: {strategy: "jwt"},
   jwt: {
     secret: process.env.NEXTAUTH_JWT_SECRET,
