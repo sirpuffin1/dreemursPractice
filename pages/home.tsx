@@ -1,8 +1,8 @@
-import { GetServerSideProps, GetStaticProps } from "next";
-import { getSession, useSession } from "next-auth/react";
+import { GetServerSideProps } from "next";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next"
 import RegistrationModal from "../components/RegistrationModal";
+import { useUser } from "../context/UserContext";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const  session  = await unstable_getServerSession(context.req, context.res, authOptions)
@@ -24,10 +24,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 const home = (props: any) => {
-    const { data: session } = useSession()
-   
+    const { username} = useUser()
 
-    if(!props.username) {
+    if(!props.username && !username) {
         return (
             <>
             {/* The button to open modal */}
@@ -35,6 +34,12 @@ const home = (props: any) => {
             </>
         )
     }
+
+    return (
+        <h1>
+            helloo
+        </h1>
+    )
 }
 
 export default home;

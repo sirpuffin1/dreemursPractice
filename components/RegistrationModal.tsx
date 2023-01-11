@@ -1,16 +1,20 @@
 import axios from "axios";
 import { ChangeEvent, useState } from "react";
+import { useUser } from "../context/UserContext";
 
 const RegistrationModal = () => {
   const [checked, setChecked] = useState(true);
   const [username, setUsername] = useState("");
+  const { setUser } = useUser()
 
   const handleModalButton = () => {
     setChecked(false);
     handleUpdateUsername()
   };
-  console.log('rendered')
+
   const handleUpdateUsername = async () => {
+    setUser(username)
+    
     const res = await axios.put("/api/post", {
         username
       }, {
@@ -24,14 +28,10 @@ const RegistrationModal = () => {
 
   const handleUsername = (event: ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
-    
   };
 
   return (
     <>
-      {/* The button to open modal */}
-
-      {/* Put this part before </body> tag */}
       <input
         type="checkbox"
         id="my-modal"
