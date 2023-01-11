@@ -3,10 +3,21 @@ import { authOptions } from "./api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next"
 import RegistrationModal from "../components/RegistrationModal";
 import { useUser } from "../context/UserContext";
+import { useSession } from "next-auth/react";
+import { ComponentWithAuth } from "../types/auth.utils";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const  session  = await unstable_getServerSession(context.req, context.res, authOptions)
-    console.log(session, 'line 6')
+
+    // if(!session) {
+    //     return {
+    //         redirect: {
+    //             destination: '/',
+    //             permanent: false
+    //         }
+    //     }
+    // }
+
     if(session) {
         const signedInUserId = await prisma.user.findFirst({
             where: {
@@ -23,13 +34,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 }
 
-const home = (props: any) => {
+const home: ComponentWithAuth = (props: any) => {
+    const { data: session } = useSession()
     const { username} = useUser()
+    console.log('home rendered')
 
     if(!props.username && !username) {
         return (
             <>
-            {/* The button to open modal */}
             <RegistrationModal/>
             </>
         )
@@ -41,5 +53,6 @@ const home = (props: any) => {
         </h1>
     )
 }
-
+home.authenticationEnabled = true
 export default home;
+
