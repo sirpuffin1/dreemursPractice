@@ -4,12 +4,14 @@ import GithubProvider from "next-auth/providers/github"
 import { compare } from 'bcrypt';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import client from '../../../lib/prismadb';
+import type { NextAuthOptions } from 'next-auth'
 
 interface IUser {
   id: string
+  username: string
 }
 
-export default NextAuth ({
+export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
     GithubProvider({
@@ -22,7 +24,9 @@ export default NextAuth ({
           hashedPassword: '',
         }
       }
+      
     }),
+    
     // ...add more providers here
     CredentialsProvider({
       id: "credentials",
@@ -82,6 +86,10 @@ export default NextAuth ({
   },
   callbacks: {
     jwt: async ({token, user}) => {
+      // const sessionUser = {
+      //   id: user?.id,
+      //   username: user?.username
+      // }
       user && (token.user = user.id)
       return token
     },
@@ -92,4 +100,6 @@ export default NextAuth ({
     }
   }
   
-})
+}
+
+export default NextAuth(authOptions)
