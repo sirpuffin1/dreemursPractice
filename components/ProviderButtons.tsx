@@ -10,7 +10,7 @@ const ProviderButtons = ({ providers }: any) => {
               key={provider.name}
               className="btn btn-wide bg-primary"
               onClick={() =>
-                signIn(provider.id)
+                signIn(provider.id, { callbackUrl: 'http://localhost:3000/home'})
               }
             >
               Sign in with {provider.name}
