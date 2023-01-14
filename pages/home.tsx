@@ -5,18 +5,11 @@ import RegistrationModal from "../components/RegistrationModal";
 import { useUser } from "../context/UserContext";
 import { useSession } from "next-auth/react";
 import { ComponentWithAuth } from "../types/auth.utils";
+import { AudioRecorder } from 'react-audio-voice-recorder';
+import { useS3Upload } from "next-s3-upload";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const  session  = await unstable_getServerSession(context.req, context.res, authOptions)
-
-    // if(!session) {
-    //     return {
-    //         redirect: {
-    //             destination: '/',
-    //             permanent: false
-    //         }
-    //     }
-    // }
 
     if(session) {
         const signedInUserId = await prisma.user.findFirst({
@@ -37,7 +30,36 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const home: ComponentWithAuth = (props: any) => {
     const { data: session } = useSession()
     const { username} = useUser()
-    console.log('home rendered')
+    const { uploadToS3 } = useS3Upload();
+
+    const addAudioElement = async (blob:any) => {
+        var file = new File([blob], (Math.round(Math.random() * 1000)).toString(), { type: `${blob.type}`})
+        console.log(file.name, file.type)
+        const url = URL.createObjectURL(blob);
+        const audio = document.createElement("audio");
+        audio.src = url;
+        audio.controls = true;
+        audio.setAttribute("controlsList", "nodownload")
+        const container = document.querySelector('#audioContainer')
+        console.log(container)
+        if(container) {
+            container.appendChild(audio);
+        }
+
+        await uploadToS3(file, {
+            endpoint: {
+                request: {
+                    headers: {
+                    },
+                    body: {
+                        userId: session?.user
+                    }
+                    
+                }
+            }
+        })
+        
+      };
 
     if(!props.username && !username) {
         return (
@@ -48,9 +70,13 @@ const home: ComponentWithAuth = (props: any) => {
     }
 
     return (
-        <h1>
-            helloo
-        </h1>
+        <>
+        <div id="audioContainer">
+        <AudioRecorder onRecordingComplete={addAudioElement} />
+        <audio controls src="https://dreamjournalbucket.s3.us-west-1.amazonaws.com/63bdae3562975006a031576b/682"/>
+        </div>
+            
+        </>
     )
 }
 home.authenticationEnabled = true
