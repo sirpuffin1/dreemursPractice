@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { ComponentWithAuth } from "../types/auth.utils";
 import { AudioRecorder } from 'react-audio-voice-recorder';
 import { useS3Upload } from "next-s3-upload";
+import getBlobDuration from 'get-blob-duration'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const  session  = await unstable_getServerSession(context.req, context.res, authOptions)
@@ -36,12 +37,18 @@ const home: ComponentWithAuth = (props: any) => {
         var file = new File([blob], (Math.round(Math.random() * 1000)).toString(), { type: `${blob.type}`})
         console.log(file.name, file.type)
         const url = URL.createObjectURL(blob);
+        const duration = await getBlobDuration(url)
+
+        if(duration < 10) {
+            return alert('Your post is not long enough.')
+        }
+        
         const audio = document.createElement("audio");
         audio.src = url;
         audio.controls = true;
+       
         audio.setAttribute("controlsList", "nodownload")
         const container = document.querySelector('#audioContainer')
-        console.log(container)
         if(container) {
             container.appendChild(audio);
         }
