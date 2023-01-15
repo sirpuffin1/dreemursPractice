@@ -2,7 +2,7 @@ import  CredentialsProvider from 'next-auth/providers/credentials';
 import NextAuth from "next-auth"
 import GithubProvider from "next-auth/providers/github"
 import { compare } from 'bcrypt';
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import client from '../../../lib/prismadb';
 import type { NextAuthOptions } from 'next-auth'
 
@@ -59,15 +59,19 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email is not registered")
         }
 
-        const isPasswordCorrect = await compare(
-          credentials!.password,
-          user.hashedPassword
-        )
+        if(user.hashedPassword) {
+          const isPasswordCorrect = await compare(
+            credentials!.password,
+            user.hashedPassword
+          )
 
-        if(!isPasswordCorrect) {
-          throw new Error("Password is incorrect")
+          if(!isPasswordCorrect) {
+            throw new Error("Password is incorrect")
+          }
+  
         }
 
+        
         return user
 
       }
