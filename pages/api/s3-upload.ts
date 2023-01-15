@@ -4,6 +4,6 @@ export default APIRoute.configure({
     async key(req, filename) {
         let userId= req.body.userId;
 
-        return `${userId}/${filename}`;
+        return `${userId}/${filename}.mp3`;
     }
 })
