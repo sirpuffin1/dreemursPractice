@@ -12,14 +12,10 @@ export default async function handler(
     },
   });
 
-  console.log(req.body)
-  console.log(req.body.transcriptId)
-
   try {
     const response = await assembly.get(`/transcript/${req.body.transcriptId}`);
-    res.status(200).json(response.data);
+    return res.status(200).json(response.data);
   } catch (error) {
-    console.log("something fucked up with getting ");
-    console.error(error);
+    return console.error(error);
   }
 }
