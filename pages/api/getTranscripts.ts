@@ -12,13 +12,14 @@ export default async function handler(
     },
   });
 
+  console.log(req.body)
+  console.log(req.body.transcriptId)
+
   try {
-    const response = await assembly.post("/transcript", {
-      audio_url: req.body.audioUrl,
-    });
+    const response = await assembly.get(`/transcript/${req.body.transcriptId}`);
     res.status(200).json(response.data);
   } catch (error) {
-    console.log("something fucked up");
+    console.log("something fucked up with getting ");
     console.error(error);
   }
 }
