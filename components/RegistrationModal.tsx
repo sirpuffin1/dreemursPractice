@@ -15,7 +15,7 @@ const RegistrationModal = () => {
   const handleUpdateUsername = async () => {
     setUser(username)
     
-    const res = await axios.put("/api/post", {
+    const res = await axios.put("/api/username", {
         username
       }, {
         headers: {
