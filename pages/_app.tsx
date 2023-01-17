@@ -5,6 +5,7 @@ import { SessionProvider, useSession } from "next-auth/react";
 import { UserProvider } from "../context/UserContext";
 import { NextComponentType, NextPageContext } from "next";
 import { AuthEnabledComponentConfig } from "../types/auth.utils";
+import Loader from "../components/Loader";
 
 type AppAuthProps = AppProps & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,12 +36,9 @@ export default function App({
 function Auth({ children }: any) {
   // if `{ required: true }` is supplied, `status` can only be "loading" or "authenticated"
   const { status } = useSession({ required: true });
-  const style = { "--value": 70 } as React.CSSProperties
 
   if (status === "loading") {
-    return <div className="flex justify-center items-center h-screen">
-      <div className="animate-spin radial-progress bg-primary text-primary-content border-4 border-primary " style={style}></div>
-    </div>
+    return <Loader/>
   }
 
   return children;
