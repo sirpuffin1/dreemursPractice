@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-interface IWinkProps {
+export interface IWinkProps {
   createdAt: Date;
   transcription: string;
 }
