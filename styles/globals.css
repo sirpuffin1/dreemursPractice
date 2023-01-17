@@ -27,3 +27,26 @@ a {
 #__next {
   min-height: 100vh;
 }
+
+audio::-webkit-media-controls-panel {
+  background-color: #9058ad;
+}
+
+audio::-webkit-media-controls-play-button {
+  background-color: white;
+  border-radius: 50%;
+}
+
+audio::-webkit-media-controls-play-button:hover {
+  background-color: rgba(177,212,224, .7);
+}
+
+audio::-webkit-media-controls-current-time-display {
+  color: #fff;
+}
+
+audio::-webkit-media-controls-time-remaining-display {
+  color: #fff;
+}
+
+
