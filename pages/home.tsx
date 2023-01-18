@@ -20,7 +20,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
       select: {
         username: true,
-        posts: true,
+        posts: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
       },
     });
 
@@ -36,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const home: ComponentWithAuth = (props: any) => {
   const { username } = useUser();
-
+ 
   if (!props.signedInUser.username && !username) {
     return (
       <>
