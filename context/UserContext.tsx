@@ -21,7 +21,6 @@ type Props = {
 }
 
 export function UserProvider({children}: Props) {
-    console.log('hey context')
     const [username, setUsername] = useState<string>('')
     const setUser = (username: string) => {
         setUsername(username)
