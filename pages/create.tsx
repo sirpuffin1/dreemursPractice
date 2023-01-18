@@ -57,12 +57,15 @@ const createPost: ComponentWithAuth = (props: any) => {
   const { data: session } = useSession();
   const { uploadToS3 } = useS3Upload();
   const lastUserWinkDate = props.lastUserPost?.posts[0]?.createdAt
-  const [transcription, setTranscription] = useState("He He had disappointed himself more than anyone else. That wasn't to say that he hadn't disappointed others. The fact was that he had disappointed a lot of people who were close to him. The fact that they were disappointed in him was something that made him even more disappointed in himself. Yet here he was, about to do the exact same things that had caused all the disappointment in the first place because he didn't know what else to do. disappointed himself more than anyone else. That wasn");
+  const [transcription, setTranscription] = useState("");
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
+  const [winkId, setWinkId ] = useState("")
+  let transcriptionPls = ''
+  let audioUrlPls = ''
   const userId = session?.user as unknown as string;
   const [remainingTime, setRemainingTime] = useState<Number>();
-  const [ transcriptionCompleted, setTranscriptionCompleted ] = useState(true)
+  const [ transcriptionCompleted, setTranscriptionCompleted ] = useState(false)
 
   const todayDate = new Date();
 
@@ -86,18 +89,38 @@ const createPost: ComponentWithAuth = (props: any) => {
     }
   };
 
-  if(lastUserWinkDate) {
-    compareDates(lastUserWinkDate, todayDate);
+  // if(lastUserWinkDate) {
+  //   compareDates(lastUserWinkDate, todayDate);
+  // }
+
+  const createWink = async (transcription: string, audioUrl: string) => {
+    const createWinkFields = { transcription, audioUrl, userId}
+
+    const res = await axios.post("/api/createWink", {
+      createWinkFields
+    }, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }).then(async (response) => {
+      setWinkId(response.data)
+      setTranscriptionCompleted(true)
+    }).catch((error) => console.log(error))
+
+    return res
   }
   
 
   const requestTranscription = async (userId: string, fileName: string) => {
     const audioUrl = `https://dreamjournalbucket.s3.us-west-1.amazonaws.com/${userId}/${fileName}.mp3`;
-
     const response = await axios.post("/api/requestTranscript", { audioUrl });
+    audioUrlPls = audioUrl
     const transcriptId = response.data.id;
     let transcriptData = response.data;
+    console.log('current status,', status)
     setStatus("Transcribing");
+    console.log('current status,', status)
 
     while (
       transcriptData.status !== "completed" &&
@@ -135,17 +158,24 @@ const createPost: ComponentWithAuth = (props: any) => {
       },
     });
 
+    
+    
+
     setStatus("Uploading");
+    console.log(userId, fileName)
     try {
       const data = await requestTranscription(userId, fileName);
       setStatus("");
       setTranscription(data.text);
+      transcriptionPls = data.text
+      const returnedWinkId = await createWink(transcriptionPls, audioUrlPls)
     } catch (error) {
       let message;
       if (error instanceof Error) message = error.message;
       else message = String(error);
       setError(String({ message }));
     }
+    
   };
 
   if(remainingTime) {
@@ -167,7 +197,7 @@ const createPost: ComponentWithAuth = (props: any) => {
   if(transcriptionCompleted) {
     return (
       <div className="flex justify-center items-center">
-        <NewWinkCard createdAt={todayDate} transcription={transcription} setTranscription={setTranscription}/>
+        <NewWinkCard createdAt={todayDate} transcription={transcription} setTranscription={setTranscription} winkId={winkId}/>
       </div>
       
     )
@@ -177,8 +207,8 @@ const createPost: ComponentWithAuth = (props: any) => {
     <div className="flex justify-center items-center h-full">
       <div className="card w-96 glass">
         <div className="card-body">
-          <h2 className="card-title text-center">Tell us about your dream!</h2>
-          <p>Just hit record and save below.</p>
+          <h2 className="card-title text-center text-white">Tell us about your dream!</h2>
+          <p className="text-white">Just hit record and save below.</p>
           <div className="card-actions justify-end">
             <AudioRecorder onRecordingComplete={addAudioElement} />
           </div>
@@ -194,7 +224,7 @@ const createPost: ComponentWithAuth = (props: any) => {
               <Loader />
             </>
           )}
-          <h1>{transcription}</h1>
+          <h1 className="text-white">{transcription}</h1>
         </div>
       </div>
     </div>

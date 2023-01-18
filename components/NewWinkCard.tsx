@@ -1,19 +1,48 @@
-import { ChangeEvent, FC, useRef } from "react";
+import axios from "axios";
+import { ChangeEvent, FC, useRef, useState } from "react";
 
 export interface IWinkProps {
   createdAt: Date;
   transcription: string;
+  winkId: string,
   setTranscription: (transcription: string) => void;
 }
 
 const NewWinkCard: FC<IWinkProps> = ({
   createdAt,
   transcription,
+  winkId,
   setTranscription,
 }) => {
+
+    const [selectValue, setSelectValue ] = useState('Health')
+
   const textareaHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = event.target;
     setTranscription(value);
+  };
+
+  const selectHandler = (event: ChangeEvent<HTMLSelectElement>) => {
+    const { value } = event.target
+    setSelectValue(value)
+  }
+
+  const updateWink = () => {
+    const updatedFields = {createdAt, transcription, selectValue, winkId}
+    console.log(updatedFields)
+    console.log('hello')
+    // const res = await axios.post("/api/register", {
+    //   updatedFields
+    // }, {
+    //   headers: {
+    //     Accept: "application/json",
+    //     "Content-Type": "application/json"
+    //   }
+    // }).then(async () => {
+    //   await loginUser();
+    // }).catch((error) => console.log(error))
+
+    // console.log(res)
   };
 
   return (
@@ -35,19 +64,19 @@ const NewWinkCard: FC<IWinkProps> = ({
             <span className="text-center mb-3">Select a dream category!</span>
           </label>
           <div className="flex justify-around gap-5">
-            <select className="select select-primary w-full max-w-xs">
+            <select className="select select-primary w-full max-w-xs" value={selectValue} onChange={selectHandler}>
               <option>Health</option>
               <option>Wealth</option>
               <option>Romance</option>
               <option>Opportunities</option>
             </select>
-            <button className="btn btn-circle btn-outline btn-primary">
+            <button className="btn btn-circle btn-outline btn-primary" onClick={updateWink}>
               <svg
                 width="24"
                 height="24"
                 xmlns="http://www.w3.org/2000/svg"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
               >
                 <path d="M21 6.285l-11.16 12.733-6.84-6.018 1.319-1.49 5.341 4.686 9.865-11.196 1.475 1.285z" />
               </svg>
