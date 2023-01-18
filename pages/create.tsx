@@ -7,6 +7,7 @@ import { useS3Upload } from "next-s3-upload";
 import { useState } from "react";
 import { AudioRecorder } from "react-audio-voice-recorder";
 import Loader from "../components/Loader";
+import NewWinkCard from "../components/NewWinkCard";
 import { ComponentWithAuth } from "../types/auth.utils";
 import { authOptions } from "./api/auth/[...nextauth]";
 
@@ -56,19 +57,21 @@ const createPost: ComponentWithAuth = (props: any) => {
   const { data: session } = useSession();
   const { uploadToS3 } = useS3Upload();
   const lastUserWinkDate = props.lastUserPost?.posts[0]?.createdAt
-  const [transcription, setTranscription] = useState("");
+  const [transcription, setTranscription] = useState("He He had disappointed himself more than anyone else. That wasn't to say that he hadn't disappointed others. The fact was that he had disappointed a lot of people who were close to him. The fact that they were disappointed in him was something that made him even more disappointed in himself. Yet here he was, about to do the exact same things that had caused all the disappointment in the first place because he didn't know what else to do. disappointed himself more than anyone else. That wasn");
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const userId = session?.user as unknown as string;
   const [remainingTime, setRemainingTime] = useState<Number>();
+  const [ transcriptionCompleted, setTranscriptionCompleted ] = useState(true)
 
-  const compareDates = (userDate: Date) => {
+  const todayDate = new Date();
+
+  const compareDates = (userDate: Date, todayDate: Date) => {
     if (remainingTime !== undefined) {
       return;
     }
 
-    const date2 = new Date();
-    var diff = date2.getTime() - userDate.getTime();
+    var diff = todayDate.getTime() - userDate.getTime();
 
     var msec = diff;
     var hh = Math.floor(msec / 1000 / 60 / 60);
@@ -84,7 +87,7 @@ const createPost: ComponentWithAuth = (props: any) => {
   };
 
   if(lastUserWinkDate) {
-    compareDates(lastUserWinkDate);
+    compareDates(lastUserWinkDate, todayDate);
   }
   
 
@@ -158,6 +161,15 @@ const createPost: ComponentWithAuth = (props: any) => {
         </div>
       </div>
     </div>
+    )
+  }
+
+  if(transcriptionCompleted) {
+    return (
+      <div className="flex justify-center items-center">
+        <NewWinkCard createdAt={todayDate} transcription={transcription} setTranscription={setTranscription}/>
+      </div>
+      
     )
   }
 
