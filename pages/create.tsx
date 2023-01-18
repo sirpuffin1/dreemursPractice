@@ -55,21 +55,20 @@ const wait = (time: number) => {
 const createPost: ComponentWithAuth = (props: any) => {
   const { data: session } = useSession();
   const { uploadToS3 } = useS3Upload();
-  const date1 = props.lastUserPost.posts[0].createdAt
+  const lastUserWinkDate = props.lastUserPost?.posts[0]?.createdAt
   const [transcription, setTranscription] = useState("");
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const userId = session?.user as unknown as string;
-
   const [remainingTime, setRemainingTime] = useState<Number>();
 
-  const compareDates = (date1: Date) => {
+  const compareDates = (userDate: Date) => {
     if (remainingTime !== undefined) {
       return;
     }
 
     const date2 = new Date();
-    var diff = date2.getTime() - date1.getTime();
+    var diff = date2.getTime() - userDate.getTime();
 
     var msec = diff;
     var hh = Math.floor(msec / 1000 / 60 / 60);
@@ -79,14 +78,15 @@ const createPost: ComponentWithAuth = (props: any) => {
     var ss = Math.floor(msec / 1000);
     msec -= ss * 1000;
 
-    console.log(12 - hh, "the remaining amount of hours");
-
     if (hh < 12) {
       setRemainingTime(12 - hh);
     }
   };
 
-  compareDates(date1);
+  if(lastUserWinkDate) {
+    compareDates(lastUserWinkDate);
+  }
+  
 
   const requestTranscription = async (userId: string, fileName: string) => {
     const audioUrl = `https://dreamjournalbucket.s3.us-west-1.amazonaws.com/${userId}/${fileName}.mp3`;
@@ -145,12 +145,28 @@ const createPost: ComponentWithAuth = (props: any) => {
     }
   };
 
+  if(remainingTime) {
+    return (
+      <div className="flex justify-center items-center h-full">
+      <div className="card w-96 glass">
+        <div className="card-body">
+          <h2 className="card-title text-center">Unfortunately things cost money...</h2>
+          <p>Try again in {remainingTime.toString()} hours</p>
+          <div className="card-actions justify-end">
+              <button>Okay...</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    )
+  }
+
   return (
     <div className="flex justify-center items-center h-full">
       <div className="card w-96 glass">
         <div className="card-body">
           <h2 className="card-title text-center">Tell us about your dream!</h2>
-          <p>Just hit record below.</p>
+          <p>Just hit record and save below.</p>
           <div className="card-actions justify-end">
             <AudioRecorder onRecordingComplete={addAudioElement} />
           </div>
