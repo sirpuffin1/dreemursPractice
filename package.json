@@ -20,7 +20,7 @@
     "axios": "^1.2.2",
     "babel-plugin-superjson-next": "^0.4.5",
     "bcrypt": "^5.1.0",
-    "daisyui": "^2.46.1",
+    "daisyui": "^2.47.0",
     "eslint": "8.31.0",
     "eslint-config-next": "13.1.1",
     "get-blob-duration": "^1.2.0",
