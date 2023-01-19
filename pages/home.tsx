@@ -56,6 +56,7 @@ const home: ComponentWithAuth = (props: any) => {
           <WinkCard
             createdAt={post.createdAt}
             transcription={post.transcription}
+            category={post.category}
           />
         ))}
       </div>
