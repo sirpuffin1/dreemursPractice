@@ -55,10 +55,11 @@ model VerificationToken {
 }
 
 model Posts {
-    id            String @id @default(auto()) @map("_id") @db.ObjectId
+    id            String   @id @default(auto()) @map("_id") @db.ObjectId
     transcription String
-    author        User?  @relation(fields: [authorId], references: [id])
-    authorId      String @db.ObjectId // relation scalar field (used in the `@relation` attribute above)
+    author        User?    @relation(fields: [authorId], references: [id])
+    authorId      String   @db.ObjectId // relation scalar field (used in the `@relation` attribute above)
     createdAt     DateTime @default(now())
     audioUrl      String
+    category      String?   @default("General")
 }
