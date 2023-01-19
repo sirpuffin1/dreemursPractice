@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ChangeEvent, FC, useRef, useState } from "react";
+import Router, { useRouter } from 'next/router';
 
 export interface IWinkProps {
   createdAt: Date;
@@ -16,6 +17,7 @@ const NewWinkCard: FC<IWinkProps> = ({
 }) => {
 
     const [selectValue, setSelectValue ] = useState('Health')
+    const router = useRouter()
 
   const textareaHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = event.target;
@@ -27,22 +29,19 @@ const NewWinkCard: FC<IWinkProps> = ({
     setSelectValue(value)
   }
 
-  const updateWink = () => {
-    const updatedFields = {createdAt, transcription, selectValue, winkId}
-    console.log(updatedFields)
-    console.log('hello')
-    // const res = await axios.post("/api/register", {
-    //   updatedFields
-    // }, {
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json"
-    //   }
-    // }).then(async () => {
-    //   await loginUser();
-    // }).catch((error) => console.log(error))
+  const updateWink = async () => {
+    const updatedFields = {transcription, selectValue, winkId}
+    const res = await axios.put("/api/updateWink", {
+      updatedFields
+    }, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }).then(async () => {
+      router.push('/home')
+    }).catch((error) => console.log(error))
 
-    // console.log(res)
   };
 
   return (
