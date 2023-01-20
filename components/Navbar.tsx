@@ -1,5 +1,7 @@
 import Link from "next/link";
 import LoginBtn from "./LoginBtn"
+import Image from 'next/image';
+import nightlyLogo from "../public/nightly.svg"
 
 const Navbar = () => {
     return (
@@ -18,12 +20,11 @@ const Navbar = () => {
     </div>
   </div>
   <div className="navbar-center">
-    <Link className="btn btn-ghost normal-case text-xl" href="/">Dreemurs</Link>
+    <Link className="btn btn-ghost normal-case text-xl" href="/">
+      <Image src={nightlyLogo}  alt="Nightly Logo" height={50} width={50}/>
+    </Link>
   </div>
   <div className="navbar-end">
-    <button className="btn btn-ghost btn-circle">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-    </button>
     <LoginBtn/>
   </div>
 </div>
