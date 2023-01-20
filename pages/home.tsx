@@ -76,7 +76,7 @@ const home: ComponentWithAuth = (props: any) => {
     <button className=" btn btn-primary" value={'7'} onClick={viewCountButtonHandler}>Past Seven</button>
     </div>
 
-    <div className="flex justify-center my-5 ">
+    <div className="flex justify-center mt-9 my-9">
     <button className="btn btn-primary btn-wide hover:bg-sleepy-purple">
     Create A New Wink</button> 
     </div>
