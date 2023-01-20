@@ -1,11 +1,12 @@
 import axios from "axios";
 import { ChangeEvent, FC, useRef, useState } from "react";
-import Router, { useRouter } from 'next/router';
+import Router, { useRouter } from "next/router";
+import Loader from "./Loader";
 
 export interface IWinkProps {
   createdAt: Date;
   transcription: string;
-  winkId: string,
+  winkId: string;
   setTranscription: (transcription: string) => void;
 }
 
@@ -15,9 +16,9 @@ const NewWinkCard: FC<IWinkProps> = ({
   winkId,
   setTranscription,
 }) => {
-
-    const [selectValue, setSelectValue ] = useState('Health')
-    const router = useRouter()
+  const [selectValue, setSelectValue] = useState("General");
+  const [updateStatus, setUpdateStatus] = useState("");
+  const router = useRouter();
 
   const textareaHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = event.target;
@@ -25,24 +26,43 @@ const NewWinkCard: FC<IWinkProps> = ({
   };
 
   const selectHandler = (event: ChangeEvent<HTMLSelectElement>) => {
-    const { value } = event.target
-    setSelectValue(value)
-  }
+    const { value } = event.target;
+    setSelectValue(value);
+  };
 
   const updateWink = async () => {
-    const updatedFields = {transcription, selectValue, winkId}
-    const res = await axios.put("/api/updateWink", {
-      updatedFields
-    }, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    }).then(async () => {
-      router.push('/home')
-    }).catch((error) => console.log(error))
-
+    setUpdateStatus("Updating");
+    const updatedFields = { transcription, selectValue, winkId };
+    const res = await axios
+      .put(
+        "/api/updateWink",
+        {
+          updatedFields,
+        },
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(async () => {
+        setUpdateStatus("");
+        router.push("/home");
+      })
+      .catch((error) => console.log(error));
   };
+
+  if (updateStatus) {
+    return (
+      <div className="card w-96 bg-base-100 shadow-xl">
+        <div className="card-body items-center text-center pb-5">
+          <h2 className="card-title text-sleepy-purple">{updateStatus}</h2>
+          <Loader />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="card w-96 bg-base-100 shadow-xl">
@@ -63,14 +83,21 @@ const NewWinkCard: FC<IWinkProps> = ({
             <span className="text-center mb-3">Select a dream category!</span>
           </label>
           <div className="flex justify-around gap-5">
-            <select className="select select-primary w-full max-w-xs" value={selectValue} onChange={selectHandler}>
+            <select
+              className="select select-primary w-full max-w-xs"
+              value={selectValue}
+              onChange={selectHandler}
+            >
               <option>General</option>
               <option>Recurring</option>
               <option>Lucid</option>
               <option>Symbolic</option>
               <option>Nightmare</option>
             </select>
-            <button className="btn btn-circle btn-outline btn-primary" onClick={updateWink}>
+            <button
+              className="btn btn-circle btn-outline btn-primary"
+              onClick={updateWink}
+            >
               <svg
                 width="24"
                 height="24"
