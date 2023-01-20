@@ -1,19 +1,25 @@
 import { useSession, signIn, signOut } from "next-auth/react"
+import { useUser } from "../context/UserContext"
+import {useRouter} from 'next/router';
 
 const LoginBtn = () => {
     const { data: session } = useSession()
-    console.log(session)
+    const {username} = useUser()
+    const router = useRouter()
     if(session) {
         return (
             <>
-{session?.user} <br />
+{username} <br />
             <button onClick={() => signOut()}>Sign Out</button>
             </>
         )
     }
     return (
         <>
-            <button onClick={() => signIn()}>Sign In/ Sign Up</button>
+        {router.pathname !== '/auth' && (
+                <button onClick={() => signIn()}>Sign In/ Sign Up</button>
+        )}
+            
         </>
     );
 }
