@@ -10,6 +10,7 @@ import Loader from "../components/Loader";
 import NewWinkCard from "../components/NewWinkCard";
 import { ComponentWithAuth } from "../types/auth.utils";
 import { authOptions } from "./api/auth/[...nextauth]";
+import { useRouter } from "next/dist/client/router";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await unstable_getServerSession(
@@ -20,7 +21,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   if (session) {
     const lastUserPost = await prisma?.user.findFirst({
-      
       where: {
         id: session?.user as unknown as string,
       },
@@ -56,16 +56,17 @@ const wait = (time: number) => {
 const createPost: ComponentWithAuth = (props: any) => {
   const { data: session } = useSession();
   const { uploadToS3 } = useS3Upload();
-  const lastUserWinkDate = props.lastUserPost?.posts[0]?.createdAt
+  const router = useRouter();
+  const lastUserWinkDate = props.lastUserPost?.posts[0]?.createdAt;
   const [transcription, setTranscription] = useState("");
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
-  const [winkId, setWinkId ] = useState("")
-  let transcriptionPls = ''
-  let audioUrlPls = ''
+  const [winkId, setWinkId] = useState("");
+  let transcriptionPls = "";
+  let audioUrlPls = "";
   const userId = session?.user as unknown as string;
   const [remainingTime, setRemainingTime] = useState<Number>();
-  const [ transcriptionCompleted, setTranscriptionCompleted ] = useState(false)
+  const [transcriptionCompleted, setTranscriptionCompleted] = useState(false);
 
   const todayDate = new Date();
 
@@ -89,39 +90,43 @@ const createPost: ComponentWithAuth = (props: any) => {
     }
   };
 
-  // if(lastUserWinkDate) {
-  //   compareDates(lastUserWinkDate, todayDate);
-  // }
+  if (lastUserWinkDate) {
+    compareDates(lastUserWinkDate, todayDate);
+  }
 
   const createWink = async (transcription: string, audioUrl: string) => {
-    const createWinkFields = { transcription, audioUrl, userId}
+    const createWinkFields = { transcription, audioUrl, userId };
 
-    const res = await axios.post("/api/createWink", {
-      createWinkFields
-    }, {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    }).then(async (response) => {
-      setWinkId(response.data)
-      setTranscriptionCompleted(true)
-    }).catch((error) => console.log(error))
+    const res = await axios
+      .post(
+        "/api/createWink",
+        {
+          createWinkFields,
+        },
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(async (response) => {
+        setWinkId(response.data);
+        setTranscriptionCompleted(true);
+      })
+      .catch((error) => alert(error));
 
-    return res
-  }
-  
+    return res;
+  };
 
   const requestTranscription = async (userId: string, fileName: string) => {
     const audioUrl = `https://dreamjournalbucket.s3.us-west-1.amazonaws.com/${userId}/${fileName}.mp3`;
     const response = await axios.post("/api/requestTranscript", { audioUrl });
-    audioUrlPls = audioUrl
+    audioUrlPls = audioUrl;
     const transcriptId = response.data.id;
     let transcriptData = response.data;
-    console.log('current status,', status)
     setStatus("Transcribing");
-    console.log('current status,', status)
-
+    
     while (
       transcriptData.status !== "completed" &&
       transcriptData.status !== "error"
@@ -158,73 +163,87 @@ const createPost: ComponentWithAuth = (props: any) => {
       },
     });
 
-    
-    
-
     setStatus("Uploading");
-    console.log(userId, fileName)
     try {
       const data = await requestTranscription(userId, fileName);
       setStatus("");
       setTranscription(data.text);
-      transcriptionPls = data.text
-      const returnedWinkId = await createWink(transcriptionPls, audioUrlPls)
+      transcriptionPls = data.text;
+      await createWink(transcriptionPls, audioUrlPls);
     } catch (error) {
       let message;
       if (error instanceof Error) message = error.message;
       else message = String(error);
       setError(String({ message }));
     }
-    
   };
 
-  if(remainingTime) {
+  if (remainingTime) {
     return (
-      <div className="flex justify-center items-center h-full">
-      <div className="card w-96 glass">
-        <div className="card-body">
-          <h2 className="card-title text-center">Unfortunately things cost money...</h2>
-          <p>Try again in {remainingTime.toString()} hours</p>
-          <div className="card-actions justify-end">
-              <button>Okay...</button>
+      <div className="flex justify-center items-center h-screen">
+        <div className="card w-96 glass">
+          <div className="card-body">
+            <h2 className="card-title text-center text-white">
+              Unfortunately things cost money...
+            </h2>
+            <p className="text-white text-center mb-3">
+              Try again in {remainingTime.toString()} hours
+            </p>
+            <div className="card-actions justify-end">
+              <button
+                className="btn btn-primary"
+                onClick={() => router.push("/home")}
+              >
+                Okay...
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    )
+    );
   }
 
-  if(transcriptionCompleted) {
+  if (transcriptionCompleted) {
     return (
-      <div className="flex justify-center items-center">
-        <NewWinkCard createdAt={todayDate} transcription={transcription} setTranscription={setTranscription} winkId={winkId}/>
+      <div className="flex justify-center items-center h-screen">
+        <NewWinkCard
+          createdAt={todayDate}
+          transcription={transcription}
+          setTranscription={setTranscription}
+          winkId={winkId}
+        />
       </div>
-      
-    )
+    );
   }
 
   return (
-    <div className="flex justify-center items-center h-full">
+    <div className="flex justify-center items-center h-screen">
       <div className="card w-96 glass">
         <div className="card-body">
-          <h2 className="card-title text-center text-white">Tell us about your dream!</h2>
-          <p className="text-white">Just hit record and save below.</p>
-          <div className="card-actions justify-end">
-            <AudioRecorder onRecordingComplete={addAudioElement} />
-          </div>
+          {status && (
+            <>
+              <h2 className="text-center text-white">{status}</h2>
+              <Loader />
+            </>
+          )}
+
+          {!status && (
+            <>
+              <h2 className="card-title text-center text-white">
+                Tell us about your dream!
+              </h2>
+              <p className="text-white">Just hit record and save below.</p>
+              <div className="card-actions justify-end">
+                <AudioRecorder onRecordingComplete={addAudioElement} />
+              </div>
+            </>
+          )}
+
           {error && (
             <>
               <h1>Oh no.. something went wrong</h1>
             </>
           )}
-
-          {status && (
-            <>
-              <h2 className="text-center">{status}</h2>
-              <Loader />
-            </>
-          )}
-          <h1 className="text-white">{transcription}</h1>
         </div>
       </div>
     </div>
