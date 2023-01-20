@@ -64,10 +64,11 @@ const NewWinkCard: FC<IWinkProps> = ({
           </label>
           <div className="flex justify-around gap-5">
             <select className="select select-primary w-full max-w-xs" value={selectValue} onChange={selectHandler}>
-              <option>Health</option>
-              <option>Wealth</option>
-              <option>Romance</option>
-              <option>Opportunities</option>
+              <option>General</option>
+              <option>Recurring</option>
+              <option>Lucid</option>
+              <option>Symbolic</option>
+              <option>Nightmare</option>
             </select>
             <button className="btn btn-circle btn-outline btn-primary" onClick={updateWink}>
               <svg
