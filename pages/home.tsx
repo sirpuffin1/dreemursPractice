@@ -5,6 +5,7 @@ import RegistrationModal from "../components/RegistrationModal";
 import { useUser } from "../context/UserContext";
 import { ComponentWithAuth } from "../types/auth.utils";
 import WinkCard, { IWinkProps } from "../components/WinkCard";
+import { useState } from "react";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await unstable_getServerSession(
@@ -19,17 +20,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         id: session?.user as unknown as string,
       },
       select: {
-        username: true,
-        posts: {
-          orderBy: {
-            createdAt: "desc",
-          },
-        },
+        username: true
       },
     });
 
+    const userWinks = await prisma?.posts.findMany({
+      take: 7,
+      where: {
+        authorId: session?.user as unknown as string
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+
     return {
-      props: { signedInUser },
+      props: { signedInUser, userWinks },
     };
   }
 
@@ -40,6 +46,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const home: ComponentWithAuth = (props: any) => {
   const { username } = useUser();
+  console.log(props)
+  console.log(props.userWinks.slice(0,3))
+  const today = 1
+  const threedays = 3
+  const week = 7
+  const [winkCount, setWinkCount] = useState(7)
  
   if (!props.signedInUser.username && !username) {
     return (
@@ -49,14 +61,33 @@ const home: ComponentWithAuth = (props: any) => {
     );
   }
 
+  const viewCountButtonHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+      const { value } = event.currentTarget
+      setWinkCount(Number(value))
+  }
+
   return (
     <>
-      <div className="flex justify-center items-center">
-        {props.signedInUser.posts.map((post: IWinkProps) => (
+    
+    
+    <div className="flex justify-center md:justify-end md:m-5 my-4 gap-2">
+    <button className=" btn btn-primary" value={'1'} onClick={viewCountButtonHandler}>Most Recent</button>
+    <button className=" btn btn-primary" value={'3'} onClick={viewCountButtonHandler}>Past Three</button>
+    <button className=" btn btn-primary" value={'7'} onClick={viewCountButtonHandler}>Past Seven</button>
+    </div>
+
+    <div className="flex justify-center my-5 ">
+    <button className="btn btn-primary btn-wide hover:bg-sleepy-purple">
+    Create A New Wink</button> 
+    </div>
+
+      <div className={`${(winkCount == 1) ? "flex justify-center items-center gap-6 m-6" : "grid grid-cols-1 gap-6 m-6 sm:grid-cols-2 lg:grid-cols-3"}`}>
+        {props.userWinks.slice(0, winkCount).map((post: IWinkProps) => (
           <WinkCard
             createdAt={post.createdAt}
             transcription={post.transcription}
             category={post.category}
+            winkCount={winkCount}
           />
         ))}
       </div>
