@@ -11,8 +11,10 @@ import NewWinkCard from "../components/NewWinkCard";
 import { ComponentWithAuth } from "../types/auth.utils";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { useRouter } from "next/dist/client/router";
+import { PrismaClient } from "@prisma/client"
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const prisma = new PrismaClient()
   const session = await unstable_getServerSession(
     context.req,
     context.res,
@@ -20,7 +22,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   );
 
   if (session) {
-    const lastUserPost = await prisma?.user.findFirst({
+    const lastUserPost = await prisma.user.findFirst({
       where: {
         id: session?.user as unknown as string,
       },
