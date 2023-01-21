@@ -10,7 +10,7 @@ const ProviderButtons = ({ providers }: any) => {
               key={provider.name}
               className="btn btn-wide btn-primary mb-2"
               onClick={() =>
-                signIn(provider.id, { callbackUrl: 'https://nightlyapp.dev/home'})
+                signIn(provider.id, { callbackUrl: 'https://nightlyapp.dev/'})
               }
             >
               Sign in with {provider.name}
