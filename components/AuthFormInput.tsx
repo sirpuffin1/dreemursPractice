@@ -28,7 +28,7 @@ const AuthFormInput = ({
         value={value}
         onChange={onChange}
         name={name}
-        className="input input-bordered w-full max-w-xs text-black"
+        className="input input-bordered w-full max-w-xs text-black bg-white"
       />
     </>
   );

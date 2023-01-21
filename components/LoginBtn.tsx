@@ -10,14 +10,14 @@ const LoginBtn = () => {
         return (
             <>
 {username} <br />
-            <button onClick={() => signOut()}>Sign Out</button>
+            <button onClick={() => signOut()} className="pr-4">Sign Out</button>
             </>
         )
     }
     return (
         <>
         {router.pathname !== '/auth' && (
-                <button onClick={() => signIn()}>Sign In/ Sign Up</button>
+                <button onClick={() => signIn()} className="pr-4">Sign In / Sign Up</button>
         )}
             
         </>

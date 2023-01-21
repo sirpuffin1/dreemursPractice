@@ -70,15 +70,15 @@ const AuthForm = () => {
 
   return (
     <div className="form-control">
-      <h2 className="card-title justify-center">{authType}</h2>
+      <h2 className="card-title justify-center text-white">{authType}</h2>
       <div className="flex">
-        <p className="text-center">
+        <p className="text-center text-white pt-3">
           {authType == "Login"
             ? "Not registered yet?"
             : "Already have an account? "}
         </p>
         <button
-          className="text-black"
+          className="text-white btn btn-outline hover:bg-primary"
           onClick={() => setAuthType(oppAuthType[authType])}
         >
           {oppAuthType[authType]}

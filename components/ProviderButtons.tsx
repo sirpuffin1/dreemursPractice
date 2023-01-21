@@ -8,7 +8,7 @@ const ProviderButtons = ({ providers }: any) => {
           provider.name !== "Credentials" && (
             <button
               key={provider.name}
-              className="btn btn-wide bg-primary"
+              className="btn btn-wide btn-primary"
               onClick={() =>
                 signIn(provider.id, { callbackUrl: 'http://localhost:3000/home'})
               }
