@@ -6,7 +6,7 @@ const AuthCard = ({providers}: any) => {
         <div className="card w-96 glass">
         <div className="card-body">
           <ProviderButtons providers={providers}/>
-          <div className="divider before:bg-white after:bg-white"></div> 
+          <div className="divider before:bg-white after:bg-white text-white">OR</div> 
           <AuthForm/>
         </div>
       </div>
