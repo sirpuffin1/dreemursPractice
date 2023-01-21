@@ -112,7 +112,6 @@ export const authOptions: NextAuthOptions = {
     },
     session: async ({session, token}) => {
       session.user = token.user as IUser
-      console.log(session, 'session')
       return session
     }
   }
