@@ -50,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const home: ComponentWithAuth = (props: any) => {
   const { username } = useUser();
   const router = useRouter();
-  const [winkCount, setWinkCount] = useState(7)
+  const [winkCount, setWinkCount] = useState(1)
 
   // console.log(props)
  
