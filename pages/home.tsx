@@ -49,14 +49,16 @@ const home: ComponentWithAuth = (props: any) => {
   const { username } = useUser();
   const router = useRouter();
   const [winkCount, setWinkCount] = useState(7)
+
+  console.log(props)
  
-  if (!props.signedInUser.username && !username) {
-    return (
-      <>
-        <RegistrationModal />
-      </>
-    );
-  }
+  // if (!props.signedInUser.username && !username) {
+  //   return (
+  //     <>
+  //       <RegistrationModal />
+  //     </>
+  //   );
+  // }
 
   const viewCountButtonHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
       const { value } = event.currentTarget
