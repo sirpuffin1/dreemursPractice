@@ -7,6 +7,9 @@ export interface AuthFormInputProps {
   labelText: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   name?: string
+  minLength: number
+  maxLength: number
+  required: boolean
 }
 
 const AuthFormInput = ({
@@ -15,7 +18,10 @@ const AuthFormInput = ({
   value,
   labelText,
   onChange,
-  name
+  name,
+  minLength,
+  maxLength,
+  required
 }: AuthFormInputProps) => {
   return (
     <>
@@ -29,6 +35,9 @@ const AuthFormInput = ({
         onChange={onChange}
         name={name}
         className="input input-bordered w-full max-w-xs text-black bg-white"
+        required={required}
+        minLength={minLength}
+        maxLength={maxLength}
       />
     </>
   );

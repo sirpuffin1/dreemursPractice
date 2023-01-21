@@ -26,8 +26,6 @@ const AuthForm = () => {
   }
 
   const registerUser = async () => {
-    const registerCredentials = {username, ...emailPassword}
-    console.log(registerCredentials)
     const res = await axios.post("/api/register", {
       username, ...emailPassword
     }, {
@@ -37,9 +35,7 @@ const AuthForm = () => {
       }
     }).then(async () => {
       await loginUser();
-    }).catch((error) => console.log(error))
-
-    console.log(res)
+    }).catch((error) => alert(error.message))
   };
 
   const loginUser = async () => {
@@ -48,7 +44,7 @@ const AuthForm = () => {
       redirect: false,
       callbackUrl: `${window.location.origin}`,
     });
-    res.error ? console.log(res.error) : redirectToHome()
+    res.error ? alert(res.error) : redirectToHome()
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -60,12 +56,10 @@ const AuthForm = () => {
   const handleEmailPassword = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setEmailPassword({ ...emailPassword, [name]: value });
-    console.log(emailPassword);
   };
 
   const handleUsername = (event: ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
-    console.log(username);
   };
 
   return (
@@ -93,6 +87,9 @@ const AuthForm = () => {
             value={username}
             labelText="Username"
             onChange={handleUsername}
+            required={true}
+            minLength={7}
+            maxLength={15}
           />
         )}
 
@@ -103,6 +100,9 @@ const AuthForm = () => {
           name="email"
           labelText="Email"
           onChange={handleEmailPassword}
+          required={true}
+            minLength={7}
+            maxLength={25}
         />
 
         <AuthFormInput
@@ -112,6 +112,9 @@ const AuthForm = () => {
           labelText="Password"
           name="password"
           onChange={handleEmailPassword}
+          required={true}
+            minLength={6}
+            maxLength={12}
         />
 
         <div className="card-actions justify-center mt-5">
