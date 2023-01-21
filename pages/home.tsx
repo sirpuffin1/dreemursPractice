@@ -7,8 +7,10 @@ import { ComponentWithAuth } from "../types/auth.utils";
 import WinkCard, { IWinkProps } from "../components/WinkCard";
 import { useState } from "react";
 import {useRouter} from 'next/router';
+import { PrismaClient } from "@prisma/client"
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const prisma = new PrismaClient()
   const session = await unstable_getServerSession(
     context.req,
     context.res,
@@ -16,7 +18,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   );
 
   if (session) {
-    const signedInUser = await prisma?.user.findUnique({
+    const signedInUser = await prisma.user.findUnique({
       where: {
         id: session?.user as unknown as string,
       },
@@ -25,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     });
 
-    const userWinks = await prisma?.posts.findMany({
+    const userWinks = await prisma.posts.findMany({
       take: 7,
       where: {
         authorId: session?.user as unknown as string
