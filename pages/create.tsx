@@ -152,6 +152,10 @@ const createPost: ComponentWithAuth = (props: any) => {
       return alert("Your post is not long enough.");
     }
 
+    if (duration > 100) {
+      return alert("Your post is way too long.")
+    }
+
     await uploadToS3(file, {
       endpoint: {
         request: {
