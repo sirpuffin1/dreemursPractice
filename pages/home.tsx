@@ -80,7 +80,6 @@ const home: ComponentWithAuth = (props: any) => {
     Create A New Wink</button> 
     </div>
 
-    {/* {props.userWinks && (
       <div className={`${(winkCount == 1) ? "flex justify-center items-center gap-6 m-6" : "grid grid-cols-1 gap-6 m-6 sm:grid-cols-2 lg:grid-cols-3"}`}>
         {props.userWinks.slice(0, winkCount).map((post: IWinkProps) => (
           <WinkCard
@@ -91,7 +90,7 @@ const home: ComponentWithAuth = (props: any) => {
           />
         ))}
       </div>
-      )} */}
+      
     </>
   );
 };
