@@ -22,7 +22,7 @@ const RegistrationModal = () => {
           Accept: "application/json",
           "Content-Type": "application/json"
         }
-      }).catch((error) => console.log(error))
+      }).catch((error) => alert(error))
   
   }
 

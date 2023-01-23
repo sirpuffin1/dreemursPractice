@@ -6,10 +6,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
     const {transcription, audioUrl, userId} = req.body.createWinkFields
-
-    console.log(req.body)
     
-
   // validate if it is a POST
   if (req.method !== "POST") {
     return res
@@ -27,7 +24,7 @@ export default async function handler(
     })
     return res.status(200).json(newWink.id)
   } catch(error) {
-      console.log(error)
+      return res.status(500).json(error)
   }
   
 }

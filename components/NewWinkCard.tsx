@@ -50,7 +50,7 @@ const NewWinkCard: FC<IWinkProps> = ({
         setUpdateStatus("");
         router.push("/home");
       })
-      .catch((error) => console.log(error));
+      .catch((error) => alert(error));
   };
 
   if (updateStatus) {
